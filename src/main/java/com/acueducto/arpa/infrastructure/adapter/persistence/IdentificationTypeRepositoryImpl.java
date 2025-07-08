@@ -1,7 +1,9 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence;
 
+import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
 import com.acueducto.arpa.domain.ports.repository.IdentificationTypeRepository;
+import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.IdentificationTypeMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,22 +19,27 @@ public class IdentificationTypeRepositoryImpl implements IdentificationTypeRepos
     }
 
     @Override
-    public Optional<IdentificationTypeEntity> update(Long id, IdentificationTypeEntity identificationTypeEntity) {
+    public Optional<IdentificationTypeDto> update(Long id, IdentificationTypeDto identificationType) {
         return jpaIdentificationTypeRepository.findById(id)
-                .map(existingType -> {
-                    existingType.setName(identificationTypeEntity.getName());
-                    return jpaIdentificationTypeRepository.save(existingType);
+                .map(existing -> {
+                    IdentificationTypeEntity entity = IdentificationTypeMapper.toEntity(identificationType);
+                    entity.setId(id);
+                    return IdentificationTypeMapper.toDomain(jpaIdentificationTypeRepository.save(entity));
                 });
     }
 
     @Override
-    public List<IdentificationTypeEntity> list() {
-        return jpaIdentificationTypeRepository.findAll();
+    public List<IdentificationTypeDto> list() {
+        return jpaIdentificationTypeRepository.findAll().stream()
+                .map(IdentificationTypeMapper::toDomain)
+                .toList();
     }
 
     @Override
-    public IdentificationTypeEntity create(IdentificationTypeEntity identificationTypeEntity) {
-        return jpaIdentificationTypeRepository.save(identificationTypeEntity);
+    public IdentificationTypeDto create(IdentificationTypeDto identificationType) {
+        return IdentificationTypeMapper.toDomain(
+                jpaIdentificationTypeRepository.save(IdentificationTypeMapper.toEntity(identificationType))
+        );
     }
 
     @Override
@@ -46,8 +53,8 @@ public class IdentificationTypeRepositoryImpl implements IdentificationTypeRepos
     }
 
     @Override
-    public Optional<IdentificationTypeEntity> findById(Long id) {
-        return jpaIdentificationTypeRepository.findById(id);
-
+    public Optional<IdentificationTypeDto> findById(Long id) {
+        return jpaIdentificationTypeRepository.findById(id)
+                .map(IdentificationTypeMapper::toDomain);
     }
 }

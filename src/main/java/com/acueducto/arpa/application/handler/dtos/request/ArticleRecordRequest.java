@@ -5,7 +5,13 @@ import jakarta.validation.constraints.Size;
 
 public record ArticleRecordRequest(
     @NotNull @Size(min = 1, max = 100) String name,
-    @NotNull String serial,
-    @NotNull String status
-    // Agregar otros campos relevantes según el dominio
+    @NotNull Long articleTypeId,
+    @NotNull Long identificationTypeId,
+    @NotNull Long personTypeId,
+    @Size(max = 500) String comment,
+    @NotNull String makerName,
+    @NotNull String identificationNumber,
+    @NotNull String serialNumber
+
+
 ) {} 

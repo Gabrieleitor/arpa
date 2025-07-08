@@ -1,7 +1,9 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence;
 
+import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
 import com.acueducto.arpa.domain.ports.repository.PersonTypeRepository;
+import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.PersonTypeMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,22 +18,27 @@ public class PersonTypeRepositoryImpl implements PersonTypeRepository {
     }
 
     @Override
-    public Optional<PersonTypeEntity> update(Long id, PersonTypeEntity identificationType) {
+    public Optional<PersonTypeDto> update(Long id, PersonTypeDto personTypeDto) {
         return jpaPersonTypeRepository.findById(id)
-                .map(existingType -> {
-                    existingType.setName(identificationType.getName());
-                    return jpaPersonTypeRepository.save(existingType);
-                });
+                .map(
+                        existing -> {
+                            PersonTypeEntity entity = PersonTypeMapper.toEntity(personTypeDto);
+                            entity.setId(id);
+                            return PersonTypeMapper.toDomain(jpaPersonTypeRepository.save(entity));
+                        }
+                );
     }
 
     @Override
-    public List<PersonTypeEntity> list() {
-        return jpaPersonTypeRepository.findAll();
+    public List<PersonTypeDto> list() {
+        return jpaPersonTypeRepository.findAll().stream()
+                .map(PersonTypeMapper::toDomain)
+                .toList();
     }
 
     @Override
-    public PersonTypeEntity create(PersonTypeEntity identificationType) {
-        return jpaPersonTypeRepository.save(identificationType);
+    public PersonTypeDto create(PersonTypeDto personTypeDto) {
+        return PersonTypeMapper.toDomain(jpaPersonTypeRepository.save(PersonTypeMapper.toEntity(personTypeDto)));
     }
 
     @Override
@@ -43,8 +50,10 @@ public class PersonTypeRepositoryImpl implements PersonTypeRepository {
                 })
                 .orElse(false);
     }
+
     @Override
-    public Optional<PersonTypeEntity> findById(Long id) {
-        return jpaPersonTypeRepository.findById(id);
+    public Optional<PersonTypeDto> findById(Long id) {
+        return jpaPersonTypeRepository.findById(id)
+                .map(PersonTypeMapper::toDomain);
     }
 }

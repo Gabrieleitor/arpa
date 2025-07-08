@@ -3,6 +3,7 @@ package com.acueducto.arpa.infrastructure.adapter.persistence.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "identification_type")
 public class IdentificationTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,8 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
 import com.acueducto.arpa.application.handler.PersonTypehandler;
+import com.acueducto.arpa.application.handler.dtos.request.PersonTypeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +21,17 @@ public class PersonTypeController {
     }
 
     @GetMapping
-    public List<PersonTypeEntity> list() {
+    public List<PersonTypeResponse> list() {
         return personTypehandler.list();
     }
 
     @PostMapping
-    public PersonTypeEntity create(@RequestBody PersonTypeEntity type) {
+    public PersonTypeResponse create(@RequestBody PersonTypeRequest type) {
         return personTypehandler.create(type);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonTypeEntity> update(@PathVariable Long id, @RequestBody PersonTypeEntity type) {
+    public ResponseEntity<PersonTypeResponse> update(@PathVariable Long id, @RequestBody PersonTypeRequest type) {
         return personTypehandler.update(id, type)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

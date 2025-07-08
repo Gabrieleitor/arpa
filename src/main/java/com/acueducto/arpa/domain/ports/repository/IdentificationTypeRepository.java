@@ -1,18 +1,19 @@
 package com.acueducto.arpa.domain.ports.repository;
 
+import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IdentificationTypeRepository {
-    Optional<IdentificationTypeEntity> update(Long id, IdentificationTypeEntity identificationTypeEntity);
+    Optional<IdentificationTypeDto> update(Long id, IdentificationTypeDto identificationType);
 
-    List<IdentificationTypeEntity> list();
+    List<IdentificationTypeDto> list();
 
-    IdentificationTypeEntity create(IdentificationTypeEntity identificationTypeEntity);
+    IdentificationTypeDto create(IdentificationTypeDto identificationType);
 
     boolean delete(Long id);
 
-    Optional<IdentificationTypeEntity> findById(Long id);
+    Optional<IdentificationTypeDto> findById(Long id);
 }

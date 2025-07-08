@@ -1,6 +1,6 @@
 package com.acueducto.arpa.domain.service;
 
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
+import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
 import com.acueducto.arpa.domain.ports.repository.IdentificationTypeRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +15,16 @@ public class IdentificationTypeService {
         this.identificationTypeRepository = identificationTypeRepository;
     }
 
-    public List<IdentificationTypeEntity> list() {
+    public List<IdentificationTypeDto> list() {
         return identificationTypeRepository.list();
     }
 
-    public IdentificationTypeEntity create(IdentificationTypeEntity identificationTypeEntity) {
-        return identificationTypeRepository.create(identificationTypeEntity);
+    public IdentificationTypeDto create(IdentificationTypeDto IdentificationTypeDto) {
+        return identificationTypeRepository.create(IdentificationTypeDto);
     }
 
-    public Optional<IdentificationTypeEntity> update(Long id, IdentificationTypeEntity identificationTypeEntity) {
-        return identificationTypeRepository.update(id, identificationTypeEntity);
+    public Optional<IdentificationTypeDto> update(Long id, IdentificationTypeDto IdentificationTypeDto) {
+        return identificationTypeRepository.update(id, IdentificationTypeDto);
     }
 
     public boolean delete(Long id) {

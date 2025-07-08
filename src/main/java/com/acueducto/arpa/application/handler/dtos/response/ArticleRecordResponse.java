@@ -4,6 +4,12 @@ public record ArticleRecordResponse(
     Long id,
     String name,
     String serial,
-    String status
-    // Agregar otros campos relevantes según el dominio
+    String status,
+    String articleTypeName,
+    String identificationTypeName,
+    String personTypeName,
+    String comment,
+    String createdAt,
+    String makerName,
+    String identificationNumber
 ) {} 

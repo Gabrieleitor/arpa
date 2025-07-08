@@ -10,6 +10,7 @@ import com.acueducto.arpa.domain.model.vo.Serial;
 import com.acueducto.arpa.domain.model.vo.Comment;
 
 @Entity
+@Table(name = "article_record")
 public class ArticleRecordEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,13 +45,15 @@ public class ArticleRecordEntity {
     @Column(nullable = false)
     private LocalDateTime entryDate;
 
+    @Column(nullable = false)
+    private String identificationNumber;
+
     private LocalDateTime exitDate;
 
     public enum ArticleStatus {
         ENTRY, EXIT
     }
 
-    // Getters y setters
     public Long getId() {
         return id;
     }
@@ -63,31 +66,31 @@ public class ArticleRecordEntity {
         return name;
     }
 
-    public void setName(Name name) {
-        this.name = name.getValue();
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public IdentificationTypeEntity getIdentificationType() {
+    public IdentificationTypeEntity getIdentificationTypeEntity() {
         return identificationTypeEntity;
     }
 
-    public void setIdentificationType(IdentificationTypeEntity identificationTypeEntity) {
+    public void setIdentificationTypeEntity(IdentificationTypeEntity identificationTypeEntity) {
         this.identificationTypeEntity = identificationTypeEntity;
     }
 
-    public PersonTypeEntity getPersonType() {
+    public PersonTypeEntity getPersonTypeEntity() {
         return personTypeEntity;
     }
 
-    public void setPersonType(PersonTypeEntity personTypeEntity) {
+    public void setPersonTypeEntity(PersonTypeEntity personTypeEntity) {
         this.personTypeEntity = personTypeEntity;
     }
 
-    public ArticleTypeEntity getArticleType() {
+    public ArticleTypeEntity getArticleTypeEntity() {
         return articleTypeEntity;
     }
 
-    public void setArticleType(ArticleTypeEntity articleTypeEntity) {
+    public void setArticleTypeEntity(ArticleTypeEntity articleTypeEntity) {
         this.articleTypeEntity = articleTypeEntity;
     }
 
@@ -95,24 +98,24 @@ public class ArticleRecordEntity {
         return make;
     }
 
-    public void setMake(Make make) {
-        this.make = make.getValue();
+    public void setMake(String make) {
+        this.make = make;
     }
 
     public String getSerial() {
         return serial;
     }
 
-    public void setSerial(Serial serial) {
-        this.serial = serial.getValue();
+    public void setSerial(String serial) {
+        this.serial = serial;
     }
 
     public String getComment() {
         return comment;
     }
 
-    public void setComment(Comment comment) {
-        this.comment = comment.getValue();
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public ArticleStatus getStatus() {
@@ -131,6 +134,14 @@ public class ArticleRecordEntity {
         this.entryDate = entryDate;
     }
 
+    public String getIdentificationNumber() {
+        return identificationNumber;
+    }
+
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
+    }
+
     public LocalDateTime getExitDate() {
         return exitDate;
     }
@@ -138,4 +149,4 @@ public class ArticleRecordEntity {
     public void setExitDate(LocalDateTime exitDate) {
         this.exitDate = exitDate;
     }
-} 
+}

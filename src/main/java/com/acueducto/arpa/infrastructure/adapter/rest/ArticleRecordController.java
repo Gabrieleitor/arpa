@@ -1,12 +1,12 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
 import com.acueducto.arpa.application.handler.ArticleRecordHandler;
-import com.acueducto.arpa.infrastructure.adapter.rest.dto.ArticleRecordDto;
-import com.acueducto.arpa.infrastructure.adapter.rest.dto.ArticleRecordEntryRequest;
+import com.acueducto.arpa.application.handler.dtos.request.ArticleRecordRequest;
+import com.acueducto.arpa.application.handler.dtos.response.ArticleRecordResponse;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -19,22 +19,23 @@ public class ArticleRecordController {
     }
 
     @PostMapping("/entry")
-    public ResponseEntity<ArticleRecordDto> registerEntry(@Valid @RequestBody ArticleRecordEntryRequest request) {
-        ArticleRecordDto article = articleRecordHandler.registerEntry(
-                request.getIdentificationTypeId(),
-                request.getPersonTypeId(),
-                request.getArticleTypeId(),
-                request.getName(),
-                request.getMake(),
-                request.getSerial(),
-                request.getComment()
+    public ResponseEntity<ArticleRecordResponse> registerEntry(@Valid @RequestBody ArticleRecordRequest request) {
+        ArticleRecordResponse article = articleRecordHandler.registerEntry(
+                request.identificationTypeId(),
+                request.personTypeId(),
+                request.articleTypeId(),
+                request.name(),
+                request.makerName(),
+                request.serialNumber(),
+                request.comment(),
+                request.identificationNumber()
         );
         return ResponseEntity.ok(article);
     }
 
     @PostMapping("/{id}/exit")
-    public ResponseEntity<ArticleRecordDto> registerExit(@PathVariable Long id) {
-        ArticleRecordDto article = articleRecordHandler.registerExit(id);
+    public ResponseEntity<ArticleRecordResponse> registerExit(@PathVariable Long id) {
+        ArticleRecordResponse article = articleRecordHandler.registerExit(id);
         return ResponseEntity.ok(article);
     }
 } 

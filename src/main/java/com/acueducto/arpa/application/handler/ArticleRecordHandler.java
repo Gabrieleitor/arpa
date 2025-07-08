@@ -1,8 +1,8 @@
 package com.acueducto.arpa.application.handler;
 
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
+import com.acueducto.arpa.application.handler.dtos.response.ArticleRecordResponse;
+import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
 import com.acueducto.arpa.domain.service.ArticleRecordService;
-import com.acueducto.arpa.infrastructure.adapter.rest.dto.ArticleRecordDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.ArticleRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,15 @@ public class ArticleRecordHandler {
         this.articleRecordService = articleRecordService;
     }
 
-    public ArticleRecordDto registerEntry(Long identificationTypeId, Long personTypeId, Long articleTypeId, String name, String make, String serial, String comment) {
-        return articleRecordService.registerEntry(identificationTypeId, personTypeId, articleTypeId, name, make, serial, comment);
+    public ArticleRecordResponse registerEntry(Long identificationTypeId, Long personTypeId, Long articleTypeId,
+                                               String name, String make, String serial, String comment, String identificationNumber) {
+        return ArticleRecordMapper.toResponse(articleRecordService.registerEntry(identificationTypeId, personTypeId,
+                articleTypeId, name, make, serial, comment, identificationNumber));
     }
 
-    public ArticleRecordDto registerExit(Long articleId) {
-        ArticleRecordEntity entity = articleRecordService.registerExit(articleId);
-        return ArticleRecordMapper.toDto(entity);
+    public ArticleRecordResponse registerExit(Long articleId) {
+        ArticleRecordDto articleRecordDto = articleRecordService.registerExit(articleId);
+        return ArticleRecordMapper.toResponse(articleRecordDto);
     }
 
 }

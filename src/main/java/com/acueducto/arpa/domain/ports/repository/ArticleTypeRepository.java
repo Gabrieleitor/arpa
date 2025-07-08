@@ -1,18 +1,19 @@
 package com.acueducto.arpa.domain.ports.repository;
 
+import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ArticleTypeRepository {
-    Optional<ArticleTypeEntity> update(Long id, ArticleTypeEntity type);
+    Optional<ArticleTypeDto> update(Long id, ArticleTypeDto type);
 
-    List<ArticleTypeEntity> list();
+    List<ArticleTypeDto> list();
 
-    ArticleTypeEntity create(ArticleTypeEntity type);
+    ArticleTypeDto create(ArticleTypeDto type);
 
     boolean delete(Long id);
 
-    Optional<ArticleTypeEntity> findById(Long id);
+    Optional<ArticleTypeDto> findById(Long id);
 }

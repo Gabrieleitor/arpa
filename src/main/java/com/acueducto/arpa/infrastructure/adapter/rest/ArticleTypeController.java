@@ -1,6 +1,8 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
 import com.acueducto.arpa.application.handler.ArticleTypeHandler;
+import com.acueducto.arpa.application.handler.dtos.request.ArticleTypeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.ArticleTypeResponse;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +20,17 @@ public class ArticleTypeController {
     }
 
     @GetMapping
-    public List<ArticleTypeEntity> list() {
+    public List<ArticleTypeResponse> list() {
         return handler.list();
     }
 
     @PostMapping
-    public ArticleTypeEntity create(@RequestBody ArticleTypeEntity type) {
+    public ArticleTypeResponse create(@RequestBody ArticleTypeRequest type) {
         return handler.create(type);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleTypeEntity> update(@PathVariable Long id, @RequestBody ArticleTypeEntity type) {
+    public ResponseEntity<ArticleTypeResponse> update(@PathVariable Long id, @RequestBody ArticleTypeRequest type) {
         return handler.update(id, type)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

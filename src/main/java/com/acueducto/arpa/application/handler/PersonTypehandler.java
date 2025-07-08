@@ -1,7 +1,10 @@
 package com.acueducto.arpa.application.handler;
 
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
+import com.acueducto.arpa.application.handler.dtos.request.PersonTypeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
+import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
 import com.acueducto.arpa.domain.service.PersonTypeService;
+import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.PersonTypeMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,16 +18,21 @@ public class PersonTypehandler {
         this.personTypeService = personTypeService;
     }
 
-    public List<PersonTypeEntity> list() {
-        return personTypeService.findAll();
+    public List<PersonTypeResponse> list() {
+        return personTypeService.findAll().stream()
+                .map(PersonTypeMapper::toResponse)
+                .toList();
     }
 
-    public PersonTypeEntity create(PersonTypeEntity personTypeEntity) {
-        return personTypeService.create(personTypeEntity);
+    public PersonTypeResponse create(PersonTypeRequest personType) {
+        PersonTypeDto personTypeDto = PersonTypeMapper.toDomain(personType);
+        return PersonTypeMapper.toResponse(personTypeService.create(personTypeDto));
     }
 
-    public Optional<PersonTypeEntity> update(Long id, PersonTypeEntity personTypeEntity) {
-        return personTypeService.update(id, personTypeEntity);
+    public Optional<PersonTypeResponse> update(Long id, PersonTypeRequest personType) {
+        PersonTypeDto personTypeDto = PersonTypeMapper.toDomain(personType);
+        return personTypeService.update(id, personTypeDto)
+                .map(PersonTypeMapper::toResponse);
     }
 
     public boolean delete(Long id) {

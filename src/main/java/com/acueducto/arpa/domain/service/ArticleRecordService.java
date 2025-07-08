@@ -1,20 +1,16 @@
 package com.acueducto.arpa.domain.service;
 
-import com.acueducto.arpa.domain.model.vo.Comment;
-import com.acueducto.arpa.domain.model.vo.Make;
-import com.acueducto.arpa.domain.model.vo.Name;
-import com.acueducto.arpa.domain.model.vo.Serial;
+import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
+import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
+import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
+import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
+import com.acueducto.arpa.domain.model.vo.*;
 import com.acueducto.arpa.domain.ports.repository.ArticleRecordRepository;
 import com.acueducto.arpa.domain.ports.repository.ArticleTypeRepository;
 import com.acueducto.arpa.domain.ports.repository.IdentificationTypeRepository;
 import com.acueducto.arpa.domain.ports.repository.PersonTypeRepository;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity.ArticleStatus;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
 import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.ArticleRecordMapper;
-import com.acueducto.arpa.infrastructure.adapter.rest.dto.ArticleRecordDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,37 +37,39 @@ public class ArticleRecordService {
 
     @Transactional
     public ArticleRecordDto registerEntry(Long identificationTypeId, Long personTypeId, Long articleTypeId,
-                                          String name, String make, String serial, String comment) {
-        IdentificationTypeEntity identificationTypeEntity = identificationTypeRepository.findById(identificationTypeId)
+                                          String name, String make, String serial, String comment, String identificationNumber) {
+        IdentificationTypeDto IdentificationTypeDto = identificationTypeRepository.findById(identificationTypeId)
                 .orElseThrow(() -> new IllegalArgumentException("Identification type not found"));
-        PersonTypeEntity personTypeEntity = personTypeRepository.findById(personTypeId)
+        PersonTypeDto personTypeDto = personTypeRepository.findById(personTypeId)
                 .orElseThrow(() -> new IllegalArgumentException("Person type not found"));
-        ArticleTypeEntity articleTypeEntity = articleTypeRepository.findById(articleTypeId)
+        ArticleTypeDto articleTypeDto = articleTypeRepository.findById(articleTypeId)
                 .orElseThrow(() -> new IllegalArgumentException("Article type not found"));
-
-        ArticleRecordEntity article = new ArticleRecordEntity();
-        article.setName(new Name(name));
-        article.setIdentificationType(identificationTypeEntity);
-        article.setPersonType(personTypeEntity);
-        article.setArticleType(articleTypeEntity);
-        article.setMake(new Make(make));
-        article.setSerial(new Serial(serial));
-        article.setComment(new Comment(comment));
-        article.setStatus(ArticleStatus.ENTRY);
-        article.setEntryDate(LocalDateTime.now());
-        article.setExitDate(null);
-        return ArticleRecordMapper.toDto(articleRecordRepository.save(article));
+        ArticleRecordDto articleRecordDto = new ArticleRecordDto(
+                null,
+                new Name(name),
+                new Serial(serial),
+                ArticleStatus.ENTRY,
+                articleTypeDto,
+                IdentificationTypeDto,
+                personTypeDto,
+                identificationNumber,
+                new Make(make),
+                new Comment(comment),
+                LocalDateTime.now()
+        );
+        return articleRecordRepository.save(articleRecordDto);
     }
 
     @Transactional
-    public ArticleRecordEntity registerExit(Long articleId) {
-        ArticleRecordEntity article = articleRecordRepository.findById(articleId)
+    public ArticleRecordDto registerExit(Long articleId) {
+        ArticleRecordDto article = articleRecordRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("Article not found"));
-        if (article.getStatus() == ArticleStatus.EXIT) {
+        if (article.status() == ArticleStatus.EXIT) {
             throw new IllegalStateException("Article has already left");
         }
-        article.setStatus(ArticleStatus.EXIT);
-        article.setExitDate(LocalDateTime.now());
+        ArticleRecordEntity entity = ArticleRecordMapper.toEntity(article);
+        entity.setStatus(ArticleRecordEntity.ArticleStatus.EXIT);
+        entity.setExitDate(LocalDateTime.now());
         return articleRecordRepository.save(article);
     }
 } 

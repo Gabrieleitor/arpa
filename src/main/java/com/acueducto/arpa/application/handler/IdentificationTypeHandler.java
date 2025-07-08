@@ -1,7 +1,11 @@
 package com.acueducto.arpa.application.handler;
 
+import com.acueducto.arpa.application.handler.dtos.request.IdentificationTypeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.IdentificationTypeResponse;
+import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
 import com.acueducto.arpa.domain.service.IdentificationTypeService;
+import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.IdentificationTypeMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,16 +20,22 @@ public class IdentificationTypeHandler {
         this.identificationTypeService = identificationTypeService;
     }
 
-    public List<IdentificationTypeEntity> list() {
-        return identificationTypeService.list();
+    public List<IdentificationTypeResponse> list() {
+        return identificationTypeService.list()
+                .stream()
+                .map(IdentificationTypeMapper::toResponse)
+                .toList();
     }
 
-    public IdentificationTypeEntity create(IdentificationTypeEntity identificationTypeEntity) {
-        return identificationTypeService.create(identificationTypeEntity);
+    public IdentificationTypeResponse create(IdentificationTypeRequest identificationTypeDto) {
+        IdentificationTypeDto identificationType = IdentificationTypeMapper.toDomain(identificationTypeDto);
+        return IdentificationTypeMapper.toResponse(identificationTypeService.create(identificationType));
     }
 
-    public Optional<IdentificationTypeEntity> update(Long id, IdentificationTypeEntity identificationTypeEntity) {
-        return identificationTypeService.update(id, identificationTypeEntity);
+    public Optional<IdentificationTypeResponse> update(Long id, IdentificationTypeRequest identificationType) {
+        IdentificationTypeDto identificationTypeDto = IdentificationTypeMapper.toDomain(identificationType);
+        return identificationTypeService.update(id, identificationTypeDto)
+                .map(IdentificationTypeMapper::toResponse);
     }
 
     public boolean delete(Long id) {

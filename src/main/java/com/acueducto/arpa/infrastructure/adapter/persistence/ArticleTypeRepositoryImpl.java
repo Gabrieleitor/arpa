@@ -1,7 +1,9 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence;
 
+import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
 import com.acueducto.arpa.domain.ports.repository.ArticleTypeRepository;
+import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.ArticleTypeMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,22 +18,24 @@ public class ArticleTypeRepositoryImpl implements ArticleTypeRepository {
     }
 
     @Override
-    public Optional<ArticleTypeEntity> update(Long id, ArticleTypeEntity type) {
-        return jpaRepository.findById(id)
-                .map(existingType -> {
-                    existingType.setName(type.getName());
-                    return jpaRepository.save(existingType);
-                });
+    public Optional<ArticleTypeDto> update(Long id, ArticleTypeDto type) {
+        return jpaRepository.findById(id).map(existingType -> {
+            ArticleTypeEntity entity = ArticleTypeMapper.toEntity(type);
+            entity.setId(id);
+            return ArticleTypeMapper.toDomain(jpaRepository.save(entity));
+        });
     }
 
     @Override
-    public List<ArticleTypeEntity> list() {
-        return jpaRepository.findAll();
+    public List<ArticleTypeDto> list() {
+        return jpaRepository.findAll().stream()
+                .map(ArticleTypeMapper::toDomain)
+                .toList();
     }
 
     @Override
-    public ArticleTypeEntity create(ArticleTypeEntity type) {
-        return jpaRepository.save(type);
+    public ArticleTypeDto create(ArticleTypeDto type) {
+        return ArticleTypeMapper.toDomain(jpaRepository.save(ArticleTypeMapper.toEntity(type)));
     }
 
     @Override
@@ -45,7 +49,8 @@ public class ArticleTypeRepositoryImpl implements ArticleTypeRepository {
     }
 
     @Override
-    public Optional<ArticleTypeEntity> findById(Long id) {
-        return jpaRepository.findById(id);
+    public Optional<ArticleTypeDto> findById(Long id) {
+        return jpaRepository.findById(id)
+                .map(ArticleTypeMapper::toDomain);
     }
 }

@@ -1,6 +1,8 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
 import com.acueducto.arpa.application.handler.IdentificationTypeHandler;
+import com.acueducto.arpa.application.handler.dtos.request.IdentificationTypeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.IdentificationTypeResponse;
 import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +20,18 @@ public class IdentificationTypeController {
     }
 
     @GetMapping
-    public List<IdentificationTypeEntity> list() {
+    public List<IdentificationTypeResponse> list() {
         return identificationTypeHandler.list();
     }
 
     @PostMapping
-    public IdentificationTypeEntity create(@RequestBody IdentificationTypeEntity type) {
-        return identificationTypeHandler.create(type);
+    public ResponseEntity<IdentificationTypeResponse> create(@RequestBody IdentificationTypeRequest type) {
+        IdentificationTypeResponse identification = identificationTypeHandler.create(type);
+        return ResponseEntity.ok(identification);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IdentificationTypeEntity> update(@PathVariable Long id, @RequestBody IdentificationTypeEntity type) {
+    public ResponseEntity<IdentificationTypeResponse> update(@PathVariable Long id, @RequestBody IdentificationTypeRequest type) {
         return identificationTypeHandler.update(id, type)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
