@@ -1,7 +1,7 @@
 package com.acueducto.arpa.domain.ports.repository;
 
 import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
+
 import java.util.List;
 import java.util.Optional;
 

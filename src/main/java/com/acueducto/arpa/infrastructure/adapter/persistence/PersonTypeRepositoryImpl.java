@@ -1,8 +1,8 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence;
 
 import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
 import com.acueducto.arpa.domain.ports.repository.PersonTypeRepository;
+import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
 import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.PersonTypeMapper;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,6 @@
 package com.acueducto.arpa.domain.ports.repository;
 
 import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
 
 import java.util.List;
 import java.util.Optional;
