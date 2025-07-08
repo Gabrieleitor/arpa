@@ -23,25 +23,42 @@ System for registering articles that enter the company, developed with Spring Bo
 ## Project Structure
 
 ```
-src/main/java/com/acueducto/arpa/
-│
-├── domain/                        # Domain Layer (business logic)
-│   ├── model/                     # Entities and Value Objects
-│   │   └── vo/                    # Value Objects
-│   ├── ports/                     # Ports (interfaces for repositories)
-│   │   └── repository/
-│   └── service/                   # Domain services (use cases)
-│
-├── application/                   # Application Layer (handlers)
-│   └── handler/
-│
-├── infrastructure/                # Infrastructure Layer (adapters)
-│   └── adapter/
-│       ├── persistence/           # Persistence adapters (JPA, implementations)
-│       │   ├── mapper/
-│       │   └── entity/
-│       └── rest/                  # REST controllers and DTOs
-│           └── dto/
+arpa/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/acueducto/arpa/
+│   │   │       ├── application/                    # Application Layer (handlers)
+│   │   │       │   └── handler/
+│   │   │       │       └── dtos/
+│   │   │       │           ├── request/            # Request DTOs
+│   │   │       │           └── response/           # Response DTOs
+│   │   │       │
+│   │   │       ├── domain/                         # Domain Layer (business logic)
+│   │   │       │   ├── model/
+│   │   │       │   │   ├── dtos/                   # Domain DTOs
+│   │   │       │   │   └── vo/                     # Value Objects
+│   │   │       │   ├── ports/
+│   │   │       │   │   └── repository/             # Repository interfaces
+│   │   │       │   └── service/                    # Domain services (use cases)
+│   │   │       │
+│   │   │       ├── infrastructure/                 # Infrastructure Layer (adapters)
+│   │   │       │   └── adapter/
+│   │   │       │       ├── persistence/            # Persistence adapters
+│   │   │       │       │   ├── entity/             # JPA entities
+│   │   │       │       │   └── mapper/             # Entity-DTO mappers
+│   │   │       │       └── rest/                   # REST controllers
+│   │   │       │           └── dto/                # REST DTOs
+│   │   │       │
+│   │   │       └── ArpaApplication.java            # Main Spring Boot application
+│   │   │
+│   │   └── resources/                              # Configuration files
+│   │       ├── static/
+│   │       └── templates/
+│   │
+│   └── test/                                       # Test files
+│       └── java/
+│           └── com/acueducto/arpa/
 │
 └── ArpaApplication.java           # Main Spring Boot application entry point
 ```
