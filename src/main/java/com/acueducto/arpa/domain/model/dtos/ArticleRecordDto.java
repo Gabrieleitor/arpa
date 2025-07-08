@@ -15,5 +15,6 @@ public record ArticleRecordDto(
     String identificationNumber,
     Make make,
     Comment comment,
-    LocalDateTime entryDate
+    LocalDateTime entryDate,
+    LocalDateTime exitDate
 ) {} 

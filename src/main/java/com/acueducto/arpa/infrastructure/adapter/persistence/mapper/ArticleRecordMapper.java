@@ -38,12 +38,36 @@ public class ArticleRecordMapper {
                 entity.getIdentificationNumber(),
                 new Make(entity.getMake()),
                 new Comment(entity.getComment()),
-                entity.getEntryDate()
+                entity.getEntryDate(),
+                entity.getExitDate() != null ? entity.getExitDate() : null
+
         );
     }
 
     public static ArticleRecordEntity toEntity(ArticleRecordDto dto) {
         ArticleRecordEntity entity = new ArticleRecordEntity();
+        if (dto.id() != null) {
+            entity.setId(dto.id());
+            entity.setExitDate(dto.exitDate());
+        }
+        entity.setArticleTypeEntity(
+                new ArticleTypeEntity(
+                        dto.articleType().id(),
+                        dto.articleType().name().value()
+                )
+        );
+        entity.setIdentificationTypeEntity(
+                new IdentificationTypeEntity(
+                        dto.identificationType().id(),
+                        dto.identificationType().name().value()
+                )
+        );
+        entity.setPersonTypeEntity(
+                new PersonTypeEntity(
+                        dto.personType().id(),
+                        dto.personType().name().value()
+                ))
+        ;
         entity.setName(dto.name().value());
         entity.setSerial(dto.serial().value());
         entity.setStatus(ArticleRecordEntity.ArticleStatus.valueOf(dto.status().name()));
@@ -66,7 +90,8 @@ public class ArticleRecordMapper {
                 null, // comment
                 null, // entryDate
                 null, // make
-                null  // identificationNumber
+                null,
+                null// identificationNumber
         );
     }
 

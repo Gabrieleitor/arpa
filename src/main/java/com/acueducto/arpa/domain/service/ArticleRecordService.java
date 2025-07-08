@@ -55,7 +55,8 @@ public class ArticleRecordService {
                 identificationNumber,
                 new Make(make),
                 new Comment(comment),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
         return articleRecordRepository.save(articleRecordDto);
     }
@@ -67,9 +68,20 @@ public class ArticleRecordService {
         if (article.status() == ArticleStatus.EXIT) {
             throw new IllegalStateException("Article has already left");
         }
-        ArticleRecordEntity entity = ArticleRecordMapper.toEntity(article);
-        entity.setStatus(ArticleRecordEntity.ArticleStatus.EXIT);
-        entity.setExitDate(LocalDateTime.now());
+        article = new ArticleRecordDto(
+                article.id(),
+                article.name(),
+                article.serial(),
+                ArticleStatus.EXIT,
+                article.articleType(),
+                article.identificationType(),
+                article.personType(),
+                article.identificationNumber(),
+                article.make(),
+                article.comment(),
+                article.entryDate(),
+                LocalDateTime.now()
+        );
         return articleRecordRepository.save(article);
     }
 } 

@@ -13,38 +13,15 @@ import java.util.Optional;
 public class ArticleRecordRepositoryImpl implements ArticleRecordRepository {
 
     private final JpaArticleRecordRepository jpaRepository;
-    private final JpaArticleTypeRepository jpaArticleTypeRepository;
-    private final JpaIdentificationTypeRepository jpaIdentificationTypeRepository;
-    private final JpaPersonTypeRepository jpaPersonTypeRepository;
 
-    public ArticleRecordRepositoryImpl(JpaArticleRecordRepository jpaRepository,
-                                     JpaArticleTypeRepository jpaArticleTypeRepository,
-                                     JpaIdentificationTypeRepository jpaIdentificationTypeRepository,
-                                     JpaPersonTypeRepository jpaPersonTypeRepository) {
+    public ArticleRecordRepositoryImpl(JpaArticleRecordRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
-        this.jpaArticleTypeRepository = jpaArticleTypeRepository;
-        this.jpaIdentificationTypeRepository = jpaIdentificationTypeRepository;
-        this.jpaPersonTypeRepository = jpaPersonTypeRepository;
     }
 
     @Override
     public ArticleRecordDto save(ArticleRecordDto articleRecord) {
         ArticleRecordEntity entity = ArticleRecordMapper.toEntity(articleRecord);
-        loadRelatedEntities(entity, articleRecord);
-        entity = jpaRepository.save(entity);
-        return ArticleRecordMapper.toDomain(entity);
-    }
-
-    private void loadRelatedEntities(ArticleRecordEntity entity, ArticleRecordDto articleRecord) {
-        entity.setArticleTypeEntity(
-                jpaArticleTypeRepository.findById(articleRecord.articleType().id()).orElse(null)
-        );
-        entity.setIdentificationTypeEntity(
-                jpaIdentificationTypeRepository.findById(articleRecord.identificationType().id()).orElse(null)
-        );
-        entity.setPersonTypeEntity(
-                jpaPersonTypeRepository.findById(articleRecord.personType().id()).orElse(null)
-        );
+        return ArticleRecordMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override
