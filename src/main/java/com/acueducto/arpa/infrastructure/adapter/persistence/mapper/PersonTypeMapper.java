@@ -9,8 +9,8 @@ import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
 public class PersonTypeMapper {
     public static PersonTypeDto toDomain(PersonTypeEntity entity) {
         return new PersonTypeDto(
-            entity.getId(),
-            new Name(entity.getName())
+                entity.getId(),
+                new Name(entity.getName())
         );
     }
 
@@ -23,15 +23,15 @@ public class PersonTypeMapper {
 
     public static PersonTypeDto toDomain(PersonTypeRequest request) {
         return new PersonTypeDto(
-            null,
-            new Name(request.name())
+                null,
+                new Name(request.name())
         );
     }
 
     public static PersonTypeResponse toResponse(PersonTypeDto dto) {
         return new PersonTypeResponse(
-            dto.id(),
-            dto.name().value()
+                dto.id(),
+                dto.name().value()
         );
     }
 } 

@@ -5,7 +5,6 @@ import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
 import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
 import com.acueducto.arpa.domain.model.vo.Name;
 import com.acueducto.arpa.domain.service.PersonTypeService;
-import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.PersonTypeMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,22 +19,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class PersonTypehandlerTest {
+class PersonTypeHandlerTest {
     @Mock
     private PersonTypeService personTypeService;
     @InjectMocks
-    private PersonTypehandler handler;
+    private PersonTypeHandler handler;
 
     private PersonTypeDto personTypeDto;
     private PersonTypeRequest personTypeRequest;
-    private PersonTypeResponse personTypeResponse;
+
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         personTypeDto = new PersonTypeDto(1L, new Name("Empleado"));
         personTypeRequest = new PersonTypeRequest("Empleado");
-        personTypeResponse = new PersonTypeResponse(1L, "Empleado");
     }
 
     @Test

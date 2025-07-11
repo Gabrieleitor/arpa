@@ -1,6 +1,6 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
-import com.acueducto.arpa.application.handler.PersonTypehandler;
+import com.acueducto.arpa.application.handler.PersonTypeHandler;
 import com.acueducto.arpa.application.handler.dtos.request.PersonTypeRequest;
 import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
 import org.slf4j.Logger;
@@ -14,11 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/person-types")
 public class PersonTypeController {
-    private final PersonTypehandler personTypehandler;
+    private final PersonTypeHandler personTypehandler;
     private static final Logger log = LoggerFactory.getLogger(PersonTypeController.class);
 
     @Autowired
-    public PersonTypeController(PersonTypehandler personTypehandler) {
+    public PersonTypeController(PersonTypeHandler personTypehandler) {
         this.personTypehandler = personTypehandler;
     }
 

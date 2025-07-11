@@ -7,13 +7,14 @@ import java.time.LocalDateTime;
 public record ArticleRecordDto(
     Long id,
     Name name,
+    Name lastName,
     Serial serial,
     ArticleStatus status,
     ArticleTypeDto articleType,
     IdentificationTypeDto identificationType,
     PersonTypeDto personType,
     String identificationNumber,
-    Make make,
+    MakeDto make,
     Comment comment,
     LocalDateTime entryDate,
     LocalDateTime exitDate

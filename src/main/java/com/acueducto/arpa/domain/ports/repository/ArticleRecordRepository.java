@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ArticleRecordRepository {
     ArticleRecordDto save(ArticleRecordDto articleRecordEntity);
+
     Optional<ArticleRecordDto> findById(Long id);
-    List<ArticleRecordDto> findAll();
+
+    List<ArticleRecordDto> findByStatusOrderByDateDesc();
 } 

@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-import com.acueducto.arpa.domain.model.vo.Name;
-import com.acueducto.arpa.domain.model.vo.Make;
-import com.acueducto.arpa.domain.model.vo.Serial;
-import com.acueducto.arpa.domain.model.vo.Comment;
-
 @Entity
 @Table(name = "article_record")
 public class ArticleRecordEntity {
@@ -19,6 +14,9 @@ public class ArticleRecordEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "last_name")
+    private String lastName;
+
     @ManyToOne(optional = false)
     private IdentificationTypeEntity identificationTypeEntity;
 
@@ -28,9 +26,8 @@ public class ArticleRecordEntity {
     @ManyToOne(optional = false)
     private ArticleTypeEntity articleTypeEntity;
 
-
-    @Column(name = "make")
-    private String make;
+    @ManyToOne(optional = false)
+    private MakeEntity make;
 
     @Column(name = "serial")
     private String serial;
@@ -40,7 +37,7 @@ public class ArticleRecordEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ArticleStatus status;
+    private ArticleStatusEnum status;
 
     @Column(nullable = false)
     private LocalDateTime entryDate;
@@ -49,10 +46,6 @@ public class ArticleRecordEntity {
     private String identificationNumber;
 
     private LocalDateTime exitDate;
-
-    public enum ArticleStatus {
-        ENTRY, EXIT
-    }
 
     public Long getId() {
         return id;
@@ -68,6 +61,14 @@ public class ArticleRecordEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public IdentificationTypeEntity getIdentificationTypeEntity() {
@@ -94,11 +95,11 @@ public class ArticleRecordEntity {
         this.articleTypeEntity = articleTypeEntity;
     }
 
-    public String getMake() {
+    public MakeEntity getMake() {
         return make;
     }
 
-    public void setMake(String make) {
+    public void setMake(MakeEntity make) {
         this.make = make;
     }
 
@@ -118,11 +119,11 @@ public class ArticleRecordEntity {
         this.comment = comment;
     }
 
-    public ArticleStatus getStatus() {
+    public ArticleStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(ArticleStatus status) {
+    public void setStatus(ArticleStatusEnum status) {
         this.status = status;
     }
 

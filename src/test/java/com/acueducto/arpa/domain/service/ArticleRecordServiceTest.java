@@ -1,18 +1,11 @@
 package com.acueducto.arpa.domain.service;
 
-import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
-import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
-import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
-import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
+import com.acueducto.arpa.domain.model.dtos.*;
 import com.acueducto.arpa.domain.model.vo.ArticleStatus;
 import com.acueducto.arpa.domain.model.vo.Comment;
-import com.acueducto.arpa.domain.model.vo.Make;
 import com.acueducto.arpa.domain.model.vo.Name;
 import com.acueducto.arpa.domain.model.vo.Serial;
-import com.acueducto.arpa.domain.ports.repository.ArticleRecordRepository;
-import com.acueducto.arpa.domain.ports.repository.ArticleTypeRepository;
-import com.acueducto.arpa.domain.ports.repository.IdentificationTypeRepository;
-import com.acueducto.arpa.domain.ports.repository.PersonTypeRepository;
+import com.acueducto.arpa.domain.ports.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,7 +17,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ArticleRecordServiceTest {
     @Mock
@@ -35,13 +29,16 @@ class ArticleRecordServiceTest {
     private PersonTypeRepository personTypeRepository;
     @Mock
     private ArticleTypeRepository articleTypeRepository;
-
+    @Mock
+    private MakeRepository makeRepository;
     @InjectMocks
     private ArticleRecordService service;
 
     private IdentificationTypeDto identificationTypeDto;
     private PersonTypeDto personTypeDto;
     private ArticleTypeDto articleTypeDto;
+    private MakeDto makeDto;
+    private ArticleRecordDto articleRecordDto;
 
     @BeforeEach
     void setUp() {
@@ -49,6 +46,9 @@ class ArticleRecordServiceTest {
         identificationTypeDto = new IdentificationTypeDto(1L, new Name("CC"));
         personTypeDto = new PersonTypeDto(1L, new Name("Empleado"));
         articleTypeDto = new ArticleTypeDto(1L, new Name("Laptop"));
+        makeDto = new MakeDto(1L, new Name("HP Inc."));
+        articleRecordDto = new ArticleRecordDto(null, new Name("HP"), new Name("Perez"), new Serial("12345"), ArticleStatus.ENTRY,
+                articleTypeDto, identificationTypeDto, personTypeDto, "987654", makeDto, new Comment("Test"), LocalDateTime.now(), null);
     }
 
     @Test
@@ -56,9 +56,10 @@ class ArticleRecordServiceTest {
         when(identificationTypeRepository.findById(1L)).thenReturn(Optional.of(identificationTypeDto));
         when(personTypeRepository.findById(1L)).thenReturn(Optional.of(personTypeDto));
         when(articleTypeRepository.findById(1L)).thenReturn(Optional.of(articleTypeDto));
+        when(makeRepository.findById(1L)).thenReturn(Optional.of(makeDto));
         when(articleRecordRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ArticleRecordDto result = service.registerEntry(1L, 1L, 1L, "HP", "HP Inc.", "12345", "Test", "987654");
+        ArticleRecordDto result = service.registerEntry(articleRecordDto);
         assertNotNull(result);
         assertEquals(ArticleStatus.ENTRY, result.status());
         assertEquals("HP", result.name().value());
@@ -67,16 +68,24 @@ class ArticleRecordServiceTest {
     @Test
     void registerEntry_identificationTypeNotFound() {
         when(identificationTypeRepository.findById(1L)).thenReturn(Optional.empty());
-        Exception ex = assertThrows(IllegalArgumentException.class, () ->
-                service.registerEntry(1L, 1L, 1L, "HP", "HP Inc.", "12345", "Test", "987654")
-        );
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> service.registerEntry(articleRecordDto));
         assertEquals("Identification type not found", ex.getMessage());
     }
 
     @Test
+    void registerEntry_makeNotFound() {
+        when(identificationTypeRepository.findById(1L)).thenReturn(Optional.of(identificationTypeDto));
+        when(personTypeRepository.findById(1L)).thenReturn(Optional.of(personTypeDto));
+        when(articleTypeRepository.findById(1L)).thenReturn(Optional.of(articleTypeDto));
+        when(makeRepository.findById(1L)).thenReturn(Optional.empty());
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> service.registerEntry(articleRecordDto));
+        assertEquals("Make not found", ex.getMessage());
+    }
+
+    @Test
     void registerExit_success() {
-        ArticleRecordDto existing = new ArticleRecordDto(1L, new Name("HP"), new Serial("12345"), ArticleStatus.ENTRY,
-                articleTypeDto, identificationTypeDto, personTypeDto, "987654", new Make("HP Inc."), new Comment("Test"), LocalDateTime.now(), null);
+        ArticleRecordDto existing = new ArticleRecordDto(1L, new Name("HP"), new Name("Perez"), new Serial("12345"), ArticleStatus.ENTRY,
+                articleTypeDto, identificationTypeDto, personTypeDto, "987654", makeDto, new Comment("Test"), LocalDateTime.now(), null);
         when(articleRecordRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(articleRecordRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -94,10 +103,30 @@ class ArticleRecordServiceTest {
 
     @Test
     void registerExit_alreadyExited() {
-        ArticleRecordDto existing = new ArticleRecordDto(1L, new Name("HP"), new Serial("12345"), ArticleStatus.EXIT,
-                articleTypeDto, identificationTypeDto, personTypeDto, "987654", new Make("HP Inc."), new Comment("Test"), LocalDateTime.now(), LocalDateTime.now());
+        ArticleRecordDto existing = new ArticleRecordDto(1L, new Name("HP"), new Name("Perez"), new Serial("12345"), ArticleStatus.EXIT,
+                articleTypeDto, identificationTypeDto, personTypeDto, "987654", makeDto, new Comment("Test"), LocalDateTime.now(), LocalDateTime.now());
         when(articleRecordRepository.findById(1L)).thenReturn(Optional.of(existing));
         Exception ex = assertThrows(IllegalStateException.class, () -> service.registerExit(1L));
         assertEquals("Article has already left", ex.getMessage());
     }
+
+    @Test
+    void registerExit_usesMapperCorrectly() {
+        ArticleRecordDto existing = new ArticleRecordDto(1L, new Name("HP"), new Name("Perez"), new Serial("12345"), ArticleStatus.ENTRY,
+                articleTypeDto, identificationTypeDto, personTypeDto, "987654", makeDto, new Comment("Test"), LocalDateTime.now(), null);
+        ArticleRecordDto exitArticle = new ArticleRecordDto(1L, new Name("HP"), new Name("Perez"), new Serial("12345"), ArticleStatus.EXIT,
+                articleTypeDto, identificationTypeDto, personTypeDto, "987654", makeDto, new Comment("Test"), existing.entryDate(), LocalDateTime.now());
+        
+        when(articleRecordRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(articleRecordRepository.save(any(ArticleRecordDto.class))).thenReturn(exitArticle);
+        
+        ArticleRecordDto result = service.registerExit(1L);
+        
+        assertNotNull(result);
+        assertEquals(ArticleStatus.EXIT, result.status());
+        assertEquals(existing.entryDate(), result.entryDate());
+        assertNotNull(result.exitDate());
+        verify(articleRecordRepository).save(any(ArticleRecordDto.class));
+    }
+
 } 

@@ -1,8 +1,8 @@
 package com.acueducto.arpa.infrastructure.adapter.rest;
 
-import com.acueducto.arpa.application.handler.PersonTypeHandler;
-import com.acueducto.arpa.application.handler.dtos.request.PersonTypeRequest;
-import com.acueducto.arpa.application.handler.dtos.response.PersonTypeResponse;
+import com.acueducto.arpa.application.handler.MakeHandler;
+import com.acueducto.arpa.application.handler.dtos.request.MakeRequest;
+import com.acueducto.arpa.application.handler.dtos.response.MakeResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,58 +19,59 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(PersonTypeController.class)
-class PersonTypeControllerTest {
+@WebMvcTest(MakeController.class)
+class MakeControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
-    private PersonTypeHandler handler;
+    private MakeHandler handler;
     @Autowired
     private ObjectMapper objectMapper;
 
-    private PersonTypeRequest request;
-    private PersonTypeResponse response;
+    private MakeRequest request;
+    private MakeResponse response;
 
     @BeforeEach
     void setUp() {
-        request = new PersonTypeRequest("Empleado");
-        response = new PersonTypeResponse(1L, "Empleado");
+        request = new MakeRequest("HP Inc.");
+        response = new MakeResponse(1L, "HP Inc.");
     }
 
     @Test
     void list_success() throws Exception {
         when(handler.list()).thenReturn(List.of(response));
-        mockMvc.perform(get("/api/person-types"))
+        mockMvc.perform(get("/api/makes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Empleado"));
+                .andExpect(jsonPath("$[0].name").value("HP Inc."));
     }
 
     @Test
     void create_success() throws Exception {
         when(handler.create(any())).thenReturn(response);
-        mockMvc.perform(post("/api/person-types")
+        mockMvc.perform(post("/api/makes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Empleado"));
+                .andExpect(jsonPath("$.name").value("HP Inc."));
     }
 
     @Test
     void update_success() throws Exception {
         when(handler.update(eq(1L), any())).thenReturn(Optional.of(response));
-        mockMvc.perform(put("/api/person-types/1")
+        mockMvc.perform(put("/api/makes/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Empleado"));
+                .andExpect(jsonPath("$.name").value("HP Inc."));
     }
 
     @Test
     void update_notFound() throws Exception {
         when(handler.update(eq(1L), any())).thenReturn(Optional.empty());
-        mockMvc.perform(put("/api/person-types/1")
+        mockMvc.perform(put("/api/makes/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
@@ -79,14 +80,14 @@ class PersonTypeControllerTest {
     @Test
     void delete_success() throws Exception {
         when(handler.delete(1L)).thenReturn(true);
-        mockMvc.perform(delete("/api/person-types/1"))
+        mockMvc.perform(delete("/api/makes/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void delete_notFound() throws Exception {
         when(handler.delete(1L)).thenReturn(false);
-        mockMvc.perform(delete("/api/person-types/1"))
+        mockMvc.perform(delete("/api/makes/1"))
                 .andExpect(status().isNotFound());
     }
 } 

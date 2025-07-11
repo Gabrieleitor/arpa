@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PersonTypehandler {
-    private PersonTypeService personTypeService;
-    private static final Logger log = LoggerFactory.getLogger(PersonTypehandler.class);
+public class PersonTypeHandler {
+    private final PersonTypeService personTypeService;
+    private static final Logger log = LoggerFactory.getLogger(PersonTypeHandler.class);
 
-    public PersonTypehandler(PersonTypeService personTypeService) {
+    public PersonTypeHandler(PersonTypeService personTypeService) {
         this.personTypeService = personTypeService;
     }
 

@@ -1,17 +1,13 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence.mapper;
 
-import com.acueducto.arpa.domain.model.dtos.ArticleTypeDto;
-import com.acueducto.arpa.domain.model.dtos.IdentificationTypeDto;
-import com.acueducto.arpa.domain.model.dtos.PersonTypeDto;
+import com.acueducto.arpa.domain.model.dtos.*;
 import com.acueducto.arpa.domain.model.vo.*;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
-import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
+import com.acueducto.arpa.infrastructure.adapter.persistence.entity.*;
 import com.acueducto.arpa.application.handler.dtos.request.ArticleRecordRequest;
 import com.acueducto.arpa.application.handler.dtos.response.ArticleRecordResponse;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleTypeEntity;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.IdentificationTypeEntity;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.PersonTypeEntity;
+import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleStatusEnum;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +17,7 @@ public class ArticleRecordMapper {
         return new ArticleRecordDto(
                 entity.getId(),
                 new Name(entity.getName()),
+                new Name(entity.getLastName()),
                 new Serial(entity.getSerial()),
                 ArticleStatus.valueOf(entity.getStatus().name()),
                 new ArticleTypeDto(
@@ -36,7 +33,7 @@ public class ArticleRecordMapper {
                         new Name(entity.getPersonTypeEntity().getName())
                 ),
                 entity.getIdentificationNumber(),
-                new Make(entity.getMake()),
+                new MakeDto(entity.getMake().getId(), new Name(entity.getMake().getName())),
                 new Comment(entity.getComment()),
                 entity.getEntryDate(),
                 entity.getExitDate() != null ? entity.getExitDate() : null
@@ -70,11 +67,12 @@ public class ArticleRecordMapper {
         ;
         entity.setName(dto.name().value());
         entity.setSerial(dto.serial().value());
-        entity.setStatus(ArticleRecordEntity.ArticleStatus.valueOf(dto.status().name()));
-        entity.setMake(dto.make().value());
+        entity.setStatus(ArticleStatusEnum.valueOf(dto.status().name()));
+        entity.setMake(new MakeEntity(dto.make().id(), dto.make().name().value()));
         entity.setComment(dto.comment().value());
         entity.setIdentificationNumber(dto.identificationNumber());
         entity.setEntryDate(dto.entryDate());
+        entity.setLastName(dto.lastName().value());
         return entity;
     }
 
@@ -82,16 +80,54 @@ public class ArticleRecordMapper {
         return new ArticleRecordDto(
                 null,
                 new Name(request.name()),
+                new Name(request.lastName()),
                 new Serial(request.serialNumber()),
+                ArticleStatus.ENTRY,
+                new ArticleTypeDto(request.articleTypeId()),
+                new IdentificationTypeDto(request.identificationTypeId()), // identificationType
+                new PersonTypeDto(request.personTypeId()),
+                request.identificationNumber(),
+                new MakeDto(request.makeId()),
+                new Comment(request.comment()),
+                LocalDateTime.now(),
+                null
+        );
+    }
+
+    public static ArticleRecordDto toDomain(ArticleRecordDto request, ArticleTypeDto articleType,
+                                            IdentificationTypeDto identificationType, PersonTypeDto personType, MakeDto makeDto) {
+        return new ArticleRecordDto(
                 null,
-                null, // articleType
-                null, // identificationType
-                null, // personType
-                null, // comment
-                null, // entryDate
-                null, // make
-                null,
-                null// identificationNumber
+                request.name(),
+                request.lastName(),
+                request.serial(),
+                request.status(),
+                articleType,
+                identificationType,
+                personType,
+                request.identificationNumber(),
+                makeDto,
+                request.comment(),
+                request.entryDate(),
+                null
+        );
+    }
+
+    public static ArticleRecordDto toExitStatus(ArticleRecordDto article, LocalDateTime exitDate) {
+        return new ArticleRecordDto(
+                article.id(),
+                article.name(),
+                article.lastName(),
+                article.serial(),
+                ArticleStatus.EXIT,
+                article.articleType(),
+                article.identificationType(),
+                article.personType(),
+                article.identificationNumber(),
+                article.make(),
+                article.comment(),
+                article.entryDate(),
+                exitDate
         );
     }
 
@@ -99,6 +135,7 @@ public class ArticleRecordMapper {
         return new ArticleRecordResponse(
                 dto.id(),
                 dto.name().value(),
+                dto.lastName().value(),
                 dto.serial().value(),
                 dto.status().name(),
                 dto.articleType().name().value(),
@@ -106,18 +143,18 @@ public class ArticleRecordMapper {
                 dto.personType().name().value(),
                 dto.comment().value(),
                 dto.entryDate().toString(),
-                dto.make().value(),
+                dto.make().name().value(),
                 dto.identificationNumber()
         );
     }
 
-    public static List<ArticleRecordDto> toDtoList(List<ArticleRecordEntity> entities) {
-        if (entities == null) {
+    public static List<ArticleRecordResponse> toResponseList(List<ArticleRecordDto> dtos) {
+        if (dtos == null) {
             return null;
         }
 
-        return entities.stream()
-                .map(ArticleRecordMapper::toDomain)
+        return dtos.stream()
+                .map(ArticleRecordMapper::toResponse)
                 .collect(Collectors.toList());
     }
 }

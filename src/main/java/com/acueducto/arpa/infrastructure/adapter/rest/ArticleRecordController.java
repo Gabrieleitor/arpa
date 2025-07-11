@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/articles")
 public class ArticleRecordController {
@@ -24,16 +26,7 @@ public class ArticleRecordController {
     @PostMapping("/entry")
     public ResponseEntity<ArticleRecordResponse> registerEntry(@Valid @RequestBody ArticleRecordRequest request) {
         log.info("Received request to register article entry: {}", request);
-        ArticleRecordResponse article = articleRecordHandler.registerEntry(
-                request.identificationTypeId(),
-                request.personTypeId(),
-                request.articleTypeId(),
-                request.name(),
-                request.makerName(),
-                request.serialNumber(),
-                request.comment(),
-                request.identificationNumber()
-        );
+        ArticleRecordResponse article = articleRecordHandler.registerEntry(request);
         log.info("Article entry registered successfully: {}", article);
         return ResponseEntity.ok(article);
     }
@@ -44,5 +37,13 @@ public class ArticleRecordController {
         ArticleRecordResponse article = articleRecordHandler.registerExit(id);
         log.info("Article exit registered successfully: {}", article);
         return ResponseEntity.ok(article);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ArticleRecordResponse>> list() {
+        log.info("Received request to list articles");
+        List<ArticleRecordResponse> articleList = articleRecordHandler.list();
+        log.info("Returning {} articles", articleList.size());
+        return ResponseEntity.ok(articleList);
     }
 } 

@@ -1,8 +1,9 @@
 package com.acueducto.arpa.infrastructure.adapter.persistence;
 
 import com.acueducto.arpa.domain.model.dtos.ArticleRecordDto;
-import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
 import com.acueducto.arpa.domain.ports.repository.ArticleRecordRepository;
+import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleRecordEntity;
+import com.acueducto.arpa.infrastructure.adapter.persistence.entity.ArticleStatusEnum;
 import com.acueducto.arpa.infrastructure.adapter.persistence.mapper.ArticleRecordMapper;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +32,8 @@ public class ArticleRecordRepositoryImpl implements ArticleRecordRepository {
     }
 
     @Override
-    public List<ArticleRecordDto> findAll() {
-        return jpaRepository.findAll()
+    public List<ArticleRecordDto> findByStatusOrderByDateDesc() {
+        return jpaRepository.findByStatusOrderByEntryDateDesc(ArticleStatusEnum.ENTRY)
                 .stream()
                 .map(ArticleRecordMapper::toDomain)
                 .toList();
