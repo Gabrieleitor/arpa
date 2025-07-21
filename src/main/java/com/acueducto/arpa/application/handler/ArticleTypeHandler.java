@@ -22,7 +22,6 @@ public class ArticleTypeHandler {
     }
 
     public List<ArticleTypeResponse> list() {
-        log.info("Handler: Listing all article types");
         try {
             List<ArticleTypeResponse> list = articleTypeService.list();
             log.info("Handler: Found {} article types", list.size());

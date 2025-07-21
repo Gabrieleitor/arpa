@@ -2,6 +2,7 @@
 FROM eclipse-temurin:24-jdk AS build
 WORKDIR /app
 COPY . .
+RUN chmod +x gradlew
 RUN ./gradlew clean build -x test
 
 # Usar una imagen base más ligera para ejecutar la app
